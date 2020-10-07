@@ -19,7 +19,7 @@ namespace xadrez_console
                     }
                     else
                     {
-                        Console.Write(tab.peca(linha, coluna) + "- ");
+                        Console.Write(tab.peca(linha, coluna) + " ");
                     }
 
                 }
