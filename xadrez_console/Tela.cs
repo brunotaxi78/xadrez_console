@@ -15,6 +15,10 @@ namespace xadrez_console
             Console.WriteLine();
             imprimirPecasCapturadas(partida);
             Console.WriteLine();
+            if (partida.xeque)
+            {
+                Console.WriteLine("!! XEQUE !!");
+            }
         }
 
         public static void imprimirPecasCapturadas(PartidaDeXadrez partida)
