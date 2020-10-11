@@ -16,6 +16,7 @@ namespace xadrez_console.xadrez
         private HashSet<Peca> capturadas;
         public bool xeque { get; private set; }
         public Peca vulneravelEnPassant { get; private set; }
+        
 
         public PartidaDeXadrez()
         {
@@ -27,6 +28,7 @@ namespace xadrez_console.xadrez
             capturadas = new HashSet<Peca>();
             colocarPecas();
             xeque = false;
+            vulneravelEnPassant = null;
         }
 
         public void desfazMovimento(Posicao origem, Posicao destino, Peca pecaCapturada)
@@ -59,6 +61,25 @@ namespace xadrez_console.xadrez
                 T.decrementarQtdMovimentos();
                 tab.colocarPeca(T, origemT);
             }
+
+            //Jogada especial en passant
+            if(p is Peao)
+            {
+                if(origem.coluna != destino.coluna && pecaCapturada == vulneravelEnPassant)
+                {
+                    Peca peao = tab.retirarPeca(destino);
+                    Posicao posP;
+                    if (p.cor == Cor.Branca)
+                    {
+                        posP = new Posicao(3, destino.coluna);
+                    }
+                    else
+                    {
+                        posP = new Posicao(4, destino.coluna);
+                    }
+                    tab.colocarPeca(peao, posP);
+                }
+            }
         }
 
         public void realizaJogada(Posicao origem, Posicao destino)
@@ -88,6 +109,18 @@ namespace xadrez_console.xadrez
             {
                 turno++;
                 mudaJogador();
+            }
+
+            Peca p = tab.peca(destino);
+
+            //Jogada especial en passant
+            if(p is Peao && (destino.linha == origem.linha - 2 || destino.linha == origem.linha + 2))
+            {
+                vulneravelEnPassant = p;
+            }
+            else
+            {
+                vulneravelEnPassant = null;
             }
         }
 
@@ -157,6 +190,26 @@ namespace xadrez_console.xadrez
                 T.incrementarQtdMovimentos();
                 tab.colocarPeca(T, destinoT);
             }
+
+            //Jogada especial en passant
+            if (p is Peao)
+            {
+                if(origem.coluna != destino.coluna && capturada == null)
+                {
+                    Posicao posP;
+                    if(p.cor == Cor.Branca)
+                    {
+                        posP = new Posicao(destino.linha + 1, destino.coluna);
+                    }
+                    else
+                    {
+                        posP = new Posicao(destino.linha - 1, destino.coluna);
+                    }
+                    capturada = tab.retirarPeca(posP);
+                    capturadas.Add(capturada);
+                }
+            }
+
             return capturada;
         }
 
